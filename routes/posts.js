@@ -158,4 +158,20 @@ router.post('/update/:id', function(req, res, next) {
     }
 })
 
+router.get('/delete/(:id)', function(req, res, next) {
+
+    let id = req.params.id;
+     
+    connection.query('DELETE FROM post WHERE id = ' + id, function(err, result) {
+        //if(err) throw err
+        if (err) {
+            // redirect to posts page
+            res.redirect('/posts')
+        } else {
+            // redirect to posts page
+            res.redirect('/posts')
+        }
+    })
+})
+
 module.exports = router;
