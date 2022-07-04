@@ -9,7 +9,7 @@ var connection = require('../library/database');
  */
 router.get('/', function (req, res, next) {
     //query
-    connection.query('SELECT * FROM posts ORDER BY id DESC', function (err, rows) {
+    connection.query('SELECT * FROM post ORDER BY id DESC', function (err, rows) {
         if (err) {
             // req.flash('error', err);
             res.render('posts', {
@@ -29,5 +29,60 @@ router.get('/', function (req, res, next) {
         }
     });
 });
+
+router.get('/create', function (req, res, next) {
+    res.render('posts/create', {
+        title: '',
+        content: ''
+    })
+})
+
+router.post('/store', function (req, res, next) {
+    
+    let title   = req.body.title;
+    let content = req.body.content;
+    let errors  = false;
+
+    if(title.length === 0) {
+        errors = true;
+        res.render('posts/create', {
+            title: title,
+            content: content
+        })
+    }
+
+    if(content.length === 0) {
+        errors = true;
+        res.render('posts/create', {
+            title: title,
+            content: content
+        })
+    }
+
+    // if no error
+    if(!errors) {
+
+        let formData = {
+            title: title,
+            content: content
+        }
+        
+        // insert query
+        connection.query('INSERT INTO post SET ?', formData, function(err, result) {
+            //if(err) throw err
+            if (err) {
+                // render to add.ejs
+                res.render('posts/create', {
+                    title: formData.title,
+                    content: formData.content                    
+                })
+            } else {                
+                res.redirect('/posts');
+            }
+        })
+    }
+
+})
+
 
 module.exports = router;
